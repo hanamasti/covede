@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<wsc:config name="Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="cc983435-6380-4d6b-8bbe-d3ec62bdec68" >
+		<wsc:connection wsdlLocation="http://mu.mulesoft-training.com/essentials/delta?wsdl" service="TicketServiceService" port="TicketServicePort" address="http://mu.mulesoft-training.com/essentials/delta" />
+	</wsc:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="030a7e03-1a25-4ec6-9f78-66365c3187ec" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="cunsumingsoapFlow" doc:id="94f1c755-5c7b-4005-a309-60edd9616734" >
+		<http:listener doc:name="Listener" doc:id="6817c510-57cb-4128-946b-f89a6e499ba4" config-ref="HTTP_Listener_config" path="/wendi"/>
+		<choice doc:name="Choice" doc:id="d8deb9c1-1a63-4b3f-bc73-e1425f710746" >
+			<when expression="#[message.attributes.queryParams.seni== null]">
+				<flow-ref doc:name="flightes" doc:id="67adec12-5e3e-44b7-a659-87fd81998b61" name="flightes"/>
+			</when>
+			<when expression="#[message.attributes.queryParams.seni !=null]">
+				<flow-ref doc:name="findeflights" doc:id="550561e2-1d14-4266-9afe-b30de7c5bafa" name="findeflights"/>
+			</when>
+		</choice>
+	</flow>
+	<flow name="flightes" doc:id="a0b0aab0-b330-4751-aebf-b52840506a6d" >
+		<wsc:consume doc:name="consume" doc:id="5a91c1f6-bfd0-46b8-88d8-b9e07a578b67" config-ref="Web_Service_Consumer_Config" operation="listAllFlights"/>
+		<ee:transform doc:name="Transform Message" doc:id="283ef0c9-e84f-47bd-a45f-8483a03b7b8b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+
+payload.body.listAllFlightsResponse]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="findeflights" doc:id="12ac4197-231c-4c2a-a1d7-e98527b83fd4" >
+		<set-variable value="#[message.attributes.queryParams.seni]" doc:name="Set Variable" doc:id="38a45727-0644-4f32-9fdf-f9f9e51b8646" variableName="destination"/>
+		<ee:transform doc:name="Transform Message" doc:id="37f82aae-dac1-4d84-b495-e4d4a2e76429">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://soap.training.mulesoft.com/
+---
+{
+	ns0#findFlight: {
+		destination: vars.destination as String
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume doc:name="Consume" doc:id="54df0928-f744-4b1d-a0ba-da3fa3137866" config-ref="Web_Service_Consumer_Config" operation="findFlight"/>
+		<ee:transform doc:name="Transform Message" doc:id="dd9f38e1-8c7a-420f-b5d7-57a4539004df">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload.body.findFlightResponse
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

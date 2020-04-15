@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<file:config name="File_Config" doc:name="File Config" doc:id="1d2c9dd9-0b16-4e33-8c3a-17329a660014" >
+		<file:connection workingDir="C:\files" />
+	</file:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="fb32b382-6e98-4be8-8453-9f2c653ca0be" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="antiiiFlow1" doc:id="398645aa-4e44-485b-9c01-ff36a1be8b94" >
+		<http:listener doc:name="Listener" doc:id="968cd1d8-8211-4500-a780-15e1d15a0fc9" path="/write" config-ref="HTTP_Listener_config"/>
+		<ee:transform doc:name="Transform Message" doc:id="073ce793-8bdc-4880-87f9-88fbb35da329" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv headerLineNumber = 0 , header = true
+---
+[{
+	product_id: attributes.queryParams.pid as String,
+	pname: attributes.queryParams.pname as String,
+	price: attributes.queryParams.price as String
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="Write" doc:id="a269a381-0526-4c06-b5c5-852c9f76ddfa" path="output\products.csv" mode="APPEND" config-ref="File_Config"/>
+	</flow>
+	<flow name="antiiiFlow" doc:id="e29e6375-df82-43fb-b33b-820ee630d47d" >
+		<file:listener doc:name="On New or Updated File" doc:id="621a08eb-15e8-42d4-aff3-e2edd7ea1d9b" config-ref="File_Config" directory="input" watermarkMode="MODIFIED_TIMESTAMP">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+		</file:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="f8e70db6-6551-44f7-9bd1-93c60f1a2751" message="#[payload]"/>
+	</flow>
+</mule>

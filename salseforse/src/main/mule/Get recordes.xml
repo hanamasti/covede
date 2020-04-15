@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="1f0d10d4-01ff-4544-9174-ea3ae3a22ecd" >
+		<salesforce:cached-basic-connection username="masti9372@gmail.com" password="Babe0613" securityToken="bhkniYqmvm4DomZIx16vXTH6c" />
+	</salesforce:sfdc-config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="72fc473e-baea-415b-81e8-a50d790e63ce" >
+		<http:listener-connection host="localhost" port="8081" />
+	</http:listener-config>
+	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="6aa431a4-54be-462e-8be9-aa82543ed5aa" >
+		<email:smtp-connection host="smtp.gmail.com" port="587" user="hana.integration05@gmail.com" password="CraftSoftware09" >
+			<email:properties >
+				<email:property key="mail.smtp.starttls.enable" value="true" />
+			</email:properties>
+		</email:smtp-connection>
+	</email:smtp-config>
+	<sub-flow name="Get_recordesSub_Flow" doc:id="5f0dcbca-7084-40f9-9ae7-37c6f8c56e4c" >
+		<salesforce:query doc:name="Query" doc:id="e60c5750-3070-4fc3-b5f2-b4c3e678ced9" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query>select ID__c,Name,Aderase__c,gende__c,Order_Number__c,Payment_mode_c__c,phone__c,product__c,Quantity__c,type__c from customerss__c</salesforce:salesforce-query>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="1331896c-769a-499e-96e9-2bba569a930e">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map (item,index) ->
+{
+	Name : item.Name
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="045db8a7-e6d2-4232-bb2a-11543a6b8733" />
+		<email:send doc:id="3f2cb659-5363-4de2-8723-11821d0f9365" config-ref="Email_SMTP" fromAddress="hanabobu2538@gmail.com" subject="SSalesforce Records">
+			<email:to-addresses>
+				<email:to-address value="hanabobu2538@gmail.com" />
+			</email:to-addresses>
+		</email:send>
+		<set-payload value="Email Sent" doc:name="Set Payload" doc:id="39272bea-a528-4a4a-8b27-125179411803" />
+	</sub-flow>
+</mule>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<sub-flow name="CamelizeSub_Flow" doc:id="0f4f4341-7f5d-489f-b69f-19cdbad8a6e5" >
+		<db:select doc:name="Select" doc:id="672cbeac-11ce-4464-9cac-cf92af970188" config-ref="Database_Config">
+			<db:sql >select Id, FirstName,LastName from hrms</db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="b08a1fba-b63d-4094-8a83-a8b1af33e17e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+import * from dw::core::Strings
+---
+{
+	"id": camelize(payload.Id[0]),
+	"FName": camelize(payload.FirstName[0]),
+	"LName": camelize(payload.LastName[0])
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>

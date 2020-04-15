@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="payload1" format="json">
+      <types:shape format="weave" example="examples/Incoming.json"><![CDATA[%dw 2.0
+
+type payload1 = {|
+  employee: Array<{|    id: String,     first_name: String,     last_name: String  |}>
+|} {"example": "{\"employee\":[{\"id\":\"A007\",\"first_name\":\"Jan\",\"last_name\":\"Doe\"},{\"id\":\"A008\",\"first_name\":\"Ron\",\"last_name\":\"David\"},{\"id\":\"A009\",\"first_name\":\"Jane\",\"last_name\":\"Kane\"},{\"id\":\"A010\",\"first_name\":\"Marsh\",\"last_name\":\"Megan\"},{\"id\":\"A011\",\"first_name\":\"Kelly\",\"last_name\":\"Mitch\"},{\"id\":\"A012\",\"first_name\":\"Chris\",\"last_name\":\"Vaste\"}]}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="hanan" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: string]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#da987887-1922-47d3-8b95-c1fcca91e277">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="payload1"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

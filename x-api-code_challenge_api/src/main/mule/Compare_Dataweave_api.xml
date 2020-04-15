@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="Compare_Dataweave_apiSub_Flow" doc:id="b9980b4d-c5bc-4efe-bb51-0ea40d4ac616" >
+		<set-variable value='#[{
+	"employee": [{
+			"id": "A007",
+			"first_name": "Jan",
+			"last_name": "Doe"
+		},
+		{
+			"id": "A008",
+			"first_name": "Ron",
+			"last_name": "David"
+		},
+		{
+			"id": "A009",
+			"first_name": "Jane",
+			"last_name": "Kane"
+		},
+		{
+			"id": "A010",
+			"first_name": "Marsh",
+			"last_name": "Megan"
+		},
+		{
+			"id": "A011",
+			"first_name": "Kelly",
+			"last_name": "Mitch"
+		},
+		{
+			"id": "A012",
+			"first_name": "Chris",
+			"last_name": "Vaste"
+		}
+	]
+}]' doc:name="Set Variable" doc:id="3b177a4a-d80a-48e0-9143-63b7563e5f6e" variableName="records" />
+		<foreach doc:name="For Each" doc:id="a507444c-1906-4395-a413-b1d155310bd2" collection="#[vars.records]">
+			<ee:transform doc:name="Transform Message" doc:id="99ece225-946d-4609-99d7-5898dff2990a">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+
+var payload2 = 
+{"scoreBoard":[{"id":"A007","subjects":["Maths","English","Arts","Drawimgs"],
+"score":[80,75,89,100]},
+{"id":"A008","subjects":["Maths","English","Arts","Drawimgs"],"score":[70,85,69,90]},
+{"id":"A021","subjects":["Maths","English","Arts","Drawimgs"],"score":[90,87,77,95]}]}
+
+
+---
+
+
+      
+/*{
+    "Scoreboard": payload.employee[0]++ payload2.scoreBoard[0]
+}*/
+
+/*payload.employee.id[0]*/
+/*payload2.scoreBoard.id[0]*/
+if (payload.employee.id[0]== payload2.scoreBoard.id[0])
+{
+    "Scoreboard": payload.employee[0]++ payload2.scoreBoard[0]
+}
+else
+"Cannot Find the Record...."
+
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			<logger level="INFO" doc:name="Logger" doc:id="0e6a9883-8b28-40e5-b2ba-8d32925e1bc3" message="#[payload]" />
+		</foreach>
+		<set-payload value="Proceeded" doc:name="Set Payload" doc:id="086e55b1-7360-4dd4-b4d8-48b4a6f0fa06" />
+	</sub-flow>
+</mule>

@@ -1,0 +1,14 @@
+  [{
+    "Order_Number__c": "KOKK7840",
+    "Gender__c": "Make",
+    "Product__c": "Shirt",
+    "Id": "a002w0000016Hd6AAE",
+    "Id__c": "2",
+    "type": "LCustomer__c",
+    "Phone_Number__c": "9.414645829E9",
+    "Name": "Shawn",
+    "Address__c": "Rati Talai",
+    "Email__c": "Sahwnjain@gmail.com",
+    "Payment_mode__c": "Debit Card",
+    "Quantity__c": "2.0"
+  }]

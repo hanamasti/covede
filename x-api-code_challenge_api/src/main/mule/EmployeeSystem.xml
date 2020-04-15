@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="ab5381ec-1048-4513-8ae3-426f5a889aa2" >
+		<db:my-sql-connection host="db4free.net" port="3306" user="ramesh123" password="ramesh123" database="apiserodatabase" />
+	</db:config>
+	<sub-flow name="EmployeeSystemSub_Flow" doc:id="41268f5d-16fb-4dd8-96bd-a03d947d1a08" >
+		<db:insert doc:id="3203efaa-c212-4a57-ae83-900366b6a1e0" config-ref="Database_Config">
+			<db:sql >insert into hrms (Id,FirstName,LastName) values (:id,:firstname,:lastname)</db:sql>
+			<db:input-parameters ><![CDATA[#[output application/json --- payload]]]></db:input-parameters>
+		</db:insert>
+		<set-payload value='#[%dw 2.0
+output application/json
+---
+{
+  message:  " employee profile is created in HRMS System"
+}]' doc:name="Set Payload" doc:id="1f02a776-928b-4bb2-8c52-e5840f6487fc" />
+	</sub-flow>
+</mule>

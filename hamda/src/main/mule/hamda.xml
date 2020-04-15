@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="289a1681-7a98-44db-bd4c-206419affd02" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="hamdaFlow" doc:id="7878faa8-3b18-4ba5-87e3-15aafbbf70f4" >
+		<http:listener doc:name="Listener" doc:id="57cbcd41-e6dd-472f-98e5-248fde63b93d" path="mule4basics" config-ref="HTTP_Listener_config"/>
+		<set-variable doc:name="Set Variable" doc:id="1244ebc2-7b17-41f3-b4ae-8c82a3e9fbf2" variableName="xy" value="#[%dw 2.0
+output application/json
+---
+{
+	attribute:'hello world'
+}]"/>
+		<set-payload doc:name="Set Payload" doc:id="5df45aad-4aab-4513-91dd-efd51a483cee" value="#[%dw 2.0
+output application/json
+---
+{
+	'variable': vars.xy,
+	'payload': message.payload
+	
+}]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="4021531f-7d0b-4027-b6ba-43eead87663b" message="#[payload]"/>
+	</flow>
+</mule>

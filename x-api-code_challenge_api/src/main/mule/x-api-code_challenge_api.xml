@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+    <http:listener-config name="employee-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+    <apikit:config name="employee-config" api="employee.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="employee-main">
+        <http:listener config-ref="employee-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="employee-config" />
+    </flow>
+    <flow name="get:\Camelize:employee-config">
+		<flow-ref doc:name="Flow Reference" doc:id="43ff69b7-86c1-4d45-a51e-8f4b5ed41259" name="CamelizeSub_Flow"/>
+    </flow>
+    <flow name="get:\Compare:employee-config">
+		<flow-ref doc:name="Flow Reference" doc:id="2f3dc878-58da-4a8b-a236-4d802ade5bcc" name="Compare_Dataweave_apiSub_Flow"/>
+    </flow>
+    <flow name="get:\Natural:employee-config">
+		<flow-ref doc:name="Flow Reference" doc:id="5eeea0cb-7387-4eb7-8545-c2d60b277a8f" name="NaturalNumberSub_Flow"/>
+    </flow>
+    <flow name="post:\Employee:employee-config">
+        <flow-ref doc:name="Flow Reference" doc:id="0fa4f924-711d-4290-9890-41f3091bca8a" name="EmployeeSystemSub_Flow"/>
+    </flow>
+</mule>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="cc92f659-e366-40bd-884b-027e1bb32e1f" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:listener-config name="HTTP_Listener_config1" doc:name="HTTP Listener config" doc:id="8bfc9961-f0c5-4db9-857e-9342e6ee05f3" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="invokeFlow" doc:id="aa250f70-990e-4b39-a42e-81da95b50f15" >
+		<http:listener doc:name="Listener" doc:id="232b7c46-c173-4a65-88c5-39eadb7b4f37" config-ref="HTTP_Listener_config1" path="/sayhello"/>
+		<java:invoke-static doc:name="Invoke static" doc:id="4202a136-bb4b-4bb7-819c-5a3808d5bbee" class="hello" method="#[vars."/>
+	</flow>
+</mule>

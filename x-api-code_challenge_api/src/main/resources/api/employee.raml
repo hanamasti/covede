@@ -1,0 +1,57 @@
+#%RAML 1.0
+title: Employee
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/9e68d486-385c-4f8f-a879-e77a9168557f/ # 
+version: v1
+/Employee:
+  post:
+    body:
+      application/json:
+        example: !include Examples/Employee.json
+          
+    responses:
+     201:
+       body:
+        application/json:
+          example:
+            {"message": Jan Doe employee profile is created in HRMS System}
+
+/Compare:
+  get:
+    body:
+      application/json:
+        example: !include Examples/Employee.json
+          
+    responses:
+     201:
+       body:
+        application/json:
+          example:
+            {"message": Jan Doe employee profile is created in HRMS System}
+
+
+/Camelize:
+  get:
+    body:
+      application/json:
+        example: !include Examples/Employee.json
+          
+    responses:
+     201:
+       body:
+        application/json:
+          example:
+            {"message": Jan Doe employee profile is created in HRMS System}            
+
+/Natural:
+  
+  get:
+    body:
+      application/json:
+        example: !include Examples/Employee.json
+          
+    responses:
+     201:
+       body:
+        application/json:
+          example:
+            {"message": Jan Doe employee profile is created in HRMS System}

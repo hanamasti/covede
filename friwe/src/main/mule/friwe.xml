@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="08a889ed-3454-4598-820a-79dc224622e0">
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="f3571bc8-ae01-4e88-af07-b0a1886d58ba" >
+		<http:request-connection host="api.zippopotam.us" />
+	</http:request-config>
+	<flow name="friweFlow" doc:id="49ef49ab-8da8-4cf2-8981-c7c33bb0d782" >
+		<http:listener doc:name="GET/postal-code" doc:id="3af35f87-d235-4808-87a1-215d15c42e27" config-ref="HTTP_Listener_config" path="us/{postalcode}"/>
+		<http:request method="GET" doc:name="Request" doc:id="8cb90971-7091-4d93-8f37-e273f143e70d" path="/us/{postalcode}" config-ref="HTTP_Request_configuration">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"Key" : "Value",
+	"postalcode" : "attributes.uriparameters.postalcode"
+}]]]></http:uri-params>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="d7023521-717a-433a-9414-8d114e3f1a01" message="#[payload]"/>
+	</flow>
+</mule>

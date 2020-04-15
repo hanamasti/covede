@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="post_recordsFlow" doc:id="7ba3b440-cb66-4c56-a8b2-3bc526671104" >
+	</flow>
+	<sub-flow name="post_recordsSub_Flow" doc:id="73d90344-e8a5-4d2d-ba32-ac52d16294ae" >
+		<salesforce:query doc:name="Query" doc:id="2934915f-edff-4b98-a8d4-63778b318150" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query>select Name,Aderase__c,gende__c,Order_Number__c,Payment_mode_c__c,phone__c,product__c,Quantity__c,type__c from customerss__c</salesforce:salesforce-query>
+		</salesforce:query>
+		<set-variable value="payload" doc:name="Set Variable" doc:id="2b681818-b698-4766-a7da-07aa09789cac" variableName="setpload" />
+		<ee:transform doc:name="Transform Message" doc:id="3f843464-b03e-4d9c-866d-498fde7e183d">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<email:send doc:name="Send" doc:id="6d53dea4-0e5d-4775-b892-37ef95a4d335" config-ref="Email_SMTP" fromAddress="hana.integration05@gmail.com" subject="wendi&amp; koki">
+			<email:to-addresses />
+		</email:send>
+	</sub-flow>
+</mule>

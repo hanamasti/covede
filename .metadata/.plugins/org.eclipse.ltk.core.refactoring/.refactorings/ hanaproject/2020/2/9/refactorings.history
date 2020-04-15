@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos; hanaproject/src/main/mule/xyz.xml&apos; to &apos;hanaproject.xml&apos;" description="Rename resource &apos;xyz.xml&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/main/mule/xyz.xml" name="hanaproject.xml" stamp="1582860767874" updateReferences="true"/>
+</session>

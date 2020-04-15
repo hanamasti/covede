@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="cb63de7f-8ece-4d99-bbf9-ff9380a0ceb3" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<api-gateway:autodiscovery apiId="16103019" doc:name="API Autodiscovery" doc:id="a28dde8f-ad27-4518-92e5-8fe3b6c16d43" flowRef="covedFlow" />
+	<flow name="covedFlow" doc:id="010a079d-c28e-466c-be8a-41205b72ad6b" >
+		<http:listener doc:name="Listener" doc:id="1ed8858a-2a22-4b7e-9bf6-7e93ced7d768" config-ref="HTTP_Listener_config" path="/19"/>
+		<set-payload value="Hello" doc:name="Set Payload" doc:id="b440d227-bc70-48f7-8f21-748abedb6bd1" />
+	</flow>
+</mule>

@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="hnicsv" format="csv">
+      <types:shape format="weave"><![CDATA[%dw 2.0
+
+type hnicsv = Array<{|  product_id: String,   pname: String,   price: String|}>
+
+]]></types:shape>
+      <types:properties>
+        <types:property name="headerLineNumber" value="0"/>
+        <types:property name="header" value="true"/>
+        <types:property name="isQuotedString" value="false"/>
+      </types:properties>
+    </types:type>
+    <types:type name="hanucsv" format="csv">
+      <types:shape format="weave"><![CDATA[%dw 2.0
+
+type hanucsv = Array<{|  product_id: String,   pname: String,   price: String|}>
+
+]]></types:shape>
+      <types:properties>
+        <types:property name="headerLineNumber" value="0"/>
+        <types:property name="header" value="true"/>
+        <types:property name="isQuotedString" value="false"/>
+      </types:properties>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#f0f952fb-576a-4643-ac99-ec9c42b2765d">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="hanucsv"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

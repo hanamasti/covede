@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<file:config name="File_Config" doc:name="File Config" doc:id="bd9fbb83-f042-4895-99ce-141a85f18fdc" >
+		<file:connection workingDir="C:\files" />
+	</file:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="13856556-c97b-44ec-a8bc-22bac7248e01" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="video12Flow1" doc:id="9f362a31-e4ad-4de8-b95f-257d4a4c258b" >
+		<http:listener doc:name="Listener" doc:id="779f7048-9c41-49a7-8b9e-b9e38c17af8b" config-ref="HTTP_Listener_config" path="/write"/>
+		<ee:transform doc:name="Transform Message" doc:id="7475b20c-b6b0-4031-a84b-140ef1db1860" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv headerLineNumber = 0 , header = true
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	pid: payload01.pid,
+	pname: payload01.pname,
+	price: payload01.price
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="Write" doc:id="9bcee93b-8421-459f-be28-1a3f4b4c2d4b" config-ref="File_Config" path="output\product.csv" createParentDirectories="false" mode="APPEND"/>
+	</flow>
+	<flow name="video12Flow" doc:id="74de86ec-80d7-436d-a933-1a006859a979" >
+		<file:listener doc:name="On New or Updated File" doc:id="727202b7-8d5b-420e-93c0-8d559fff7900" config-ref="File_Config" directory="input" watermarkMode="MODIFIED_TIMESTAMP">
+			<scheduling-strategy >
+				<fixed-frequency frequency="5" timeUnit="MINUTES"/>
+			</scheduling-strategy>
+		</file:listener>
+		<ee:transform doc:name="Transform Message" doc:id="55c35c26-63b7-4236-bb09-77bfec2af609" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<foreach doc:name="For Each" doc:id="c23052ae-c03a-4304-9d62-b8120aaed8ef" >
+			<logger level="INFO" doc:name="Logger" doc:id="a3d3a8d5-8118-4d3a-9268-12933914ef90" message="#[payload]" />
+		</foreach>
+	</flow>
+</mule>
